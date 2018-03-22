@@ -12,8 +12,9 @@ if __name__ == '__main__':
     log.addHandler(h)
 
     scheduler = BlockingScheduler()
-    #scheduler.add_job(buy, 'cron', second='0', minute='0', hour='*/2')
-    scheduler.add_job(sell, 'cron', second='0', minute='*')
+    scheduler.add_job(buy, 'cron', second='0', minute='0', hour='*/2')
+    scheduler.add_job(sell, 'cron', second='0', minute='*/15')
+    print('任务已启动')
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
