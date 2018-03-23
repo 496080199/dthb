@@ -2,6 +2,6 @@
 PRONUM=`ps -ef|grep "python3 -u run.py"|grep -v "grep"|wc -l`
 if [ $PRONUM -ne 0 ]
 then
-    PID=`ps -ef|grep "python3 -u run.py"|grep -v "grep"|awk '{print $1}'
+    PID=`ps -ef|grep "python3 -u run.py"|grep -v "grep"|awk '{print $1}'`
     kill -9 $PID
-fi`
+fi
