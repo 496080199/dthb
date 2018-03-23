@@ -55,9 +55,10 @@ def buy(symbol,amount):
         exchange.cancel_order(orderdata['id'])
         print('订单取消')
         return 'False'
+    filledamount=orderinfo['info']['field-amount']-orderinfo['info']['field-fees']
     sqldata = "INSERT INTO t_order (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
         orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
-        orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(orderinfo['filled']) + "','False')"
+        orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','False')"
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     c.execute(sqldata)
@@ -90,7 +91,7 @@ def sell(symbol,percent):
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
     averageprice = (ask + bid) / 2
-    profit = averageprice * sumfilled
+    profit = averageprice * sumfilled * 0.98
     print('当前均价:' + str(averageprice)+',当前收益:'+str(profit)+',预期收益:' + str(wantprofit))
     if profit> wantprofit:
         orderdata = exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
