@@ -55,7 +55,7 @@ def buy(symbol,amount):
         exchange.cancel_order(orderdata['id'])
         print('订单取消')
         return 'False'
-    filledamount=orderinfo['info']['field-amount']-orderinfo['info']['field-fees']
+    filledamount=float(orderinfo['info']['field-amount'])-float(orderinfo['info']['field-fees'])
     sqldata = "INSERT INTO t_order (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
         orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
         orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','False')"
