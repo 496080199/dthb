@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
 
     scheduler = BlockingScheduler()
-    scheduler.add_job(buy, 'cron', second='30', minute=QTUMBUYMINUTE, hour=QTUMBUYHOUR,name='qtumbuy', kwargs={'symbol':QTUMSYMBOL,'amount':QTUMAMOUNT})
+    scheduler.add_job(buy, 'cron', second='59', minute=QTUMBUYMINUTE, hour=QTUMBUYHOUR,name='qtumbuy', kwargs={'symbol':QTUMSYMBOL,'amount':QTUMAMOUNT})
     scheduler.add_job(sell, 'cron', second='0', minute=QTUMSELLMINUTE, hour=QTUMSELLHOUR,name='qtumsell', kwargs={'symbol':QTUMSYMBOL,'percent':QTUMPERCENT})
     print('任务已启动')
     print(str(scheduler.print_jobs()))
