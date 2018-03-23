@@ -50,8 +50,8 @@ def buy():
         exchange.cancel_order(orderdata['id'])
         print('订单取消')
         return 'False'
-    orderinfo = exchange.fetchOrder(symbol=SYMBOL, id=orderdata['id'])
-    if orderinfo['status'] != 'close':
+    orderinfo = exchange.fetch_order(symbol=SYMBOL, id=orderdata['id'])
+    if orderinfo['status'] != 'closed':
         exchange.cancel_order(orderdata['id'])
         print('订单取消')
         return 'False'
