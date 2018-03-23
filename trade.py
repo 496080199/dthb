@@ -2,8 +2,8 @@
 
 import ccxt, time, json
 import sqlite3
+from config_tpl import *
 
-DB = 'huobipro.db'
 
 conn = sqlite3.connect(DB)
 c = conn.cursor()
@@ -21,10 +21,6 @@ try:
 except:
     pass
 
-ACCKEY = "451ea17c-77ed704a-f39aae0c-af477"
-SECKEY = "6204fb72-bde5858c-570def0b-deba4"
-
-SYMBOL = 'QTUM/USDT'
 
 
 def login():
