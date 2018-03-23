@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import ccxt, time, json
+import ccxt, time,datetime ,json,pytz
 import sqlite3
 from config_tpl import *
 
+tz = pytz.timezone('Asia/Shanghai')
 
 conn = sqlite3.connect(DB)
 c = conn.cursor()
@@ -36,17 +37,12 @@ def login():
 #    if i['currency'] == 'usdt' and i['type'] == 'trade':
 #       print('可用USDT:'+i['balance'])
 
-def exesql(sqldata):
-    conn = sqlite3.connect(DB)
-    c = conn.cursor()
-    cursor = c.execute(sqldata);
-    conn.commit()
-    conn.close()
-    return cursor
 
-
+def getdatetime():
+    dt=datetime.datetime.now(tz).isoformat()
+    return dt
 def buy():
-    print('===开始执行买入任务...')
+    print(getdatetime()+'===开始执行买入任务...')
     exchange = login()
     orderdata = exchange.create_market_buy_order(symbol=SYMBOL, amount=0.1)
     time.sleep(5)
@@ -67,12 +63,12 @@ def buy():
     c.execute(sqldata)
     conn.commit()
     conn.close()
-    print('===买入成功')
+    print(getdatetime()+'===买入成功')
     return 'True'
 
 
 def sell():
-    print('===开始执行卖出任务...')
+    print(getdatetime()+'===开始执行卖出任务...')
     exchange = login()
     sqldata = "SELECT id,amount,filled  from t_order WHERE process='False'"
     conn = sqlite3.connect(DB)
@@ -94,7 +90,7 @@ def sell():
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
     averageprice = (ask + bid) / 2
     print('当前均价:' + str(averageprice))
-    if averageprice * sumfilled > 1.06 * sumamount:
+    if averageprice * sumfilled > 1.07 * sumamount:
         orderdata = exchange.create_market_sell_order(symbol=SYMBOL, amount=sumfilled)
         if orderdata['info']['status'] != 'ok':
             exchange.cancel_order(orderdata['id'])
@@ -114,7 +110,7 @@ def sell():
         print('卖出成功')
         return 'True'
     conn.close()
-    print('===未达卖出条件')
+    print(getdatetime()+'===未达卖出条件')
     return 'False'
 
 

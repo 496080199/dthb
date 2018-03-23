@@ -11,7 +11,7 @@ if __name__ == '__main__':
     h.setFormatter(fmt)
     log.addHandler(h)
 
-    scheduler = BlockingScheduler()
+    scheduler = BlockingScheduler(timezone=tz)
     scheduler.add_job(buy, 'cron', second='0', minute='0', hour='*/2')
     scheduler.add_job(sell, 'cron', second='0', minute='*/15')
     print('任务已启动')
