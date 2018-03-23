@@ -90,21 +90,25 @@ def sell():
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
     averageprice = (ask + bid) / 2
     print('当前均价:' + str(averageprice))
-    if averageprice * sumfilled > 1.07 * sumamount:
+    profit=averageprice * sumfilled
+    wantprofit=1.07 * sumamount
+    print('当前均价:' + str(averageprice)+',当前收益:'+str(profit)+',预期收益:' + str(wantprofit))
+    if profit> wantprofit:
         orderdata = exchange.create_market_sell_order(symbol=SYMBOL, amount=sumfilled)
         if orderdata['info']['status'] != 'ok':
             exchange.cancel_order(orderdata['id'])
             conn.close()
             print('订单取消')
             return 'False'
-        orderinfo = exchange.fetchOrder(symbol=SYMBOL, id=orderdata['id'])
-        if orderinfo['status'] != 'close':
+        orderinfo = exchange.fetch_order(symbol=SYMBOL, id=orderdata['id'])
+        if orderinfo['status'] != 'closed':
             exchange.cancel_order(orderdata['id'])
             conn.close()
             print('订单取消')
             return 'False'
         for oid in idlist:
             sqldata = "UPDATE t_order set process = 'True' WHERE ID='" + str(oid) + "'"
+            c.execute(sqldata)
             conn.commit()
             conn.close()
         print('卖出成功')
