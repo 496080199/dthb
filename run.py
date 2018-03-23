@@ -11,9 +11,9 @@ if __name__ == '__main__':
     h.setFormatter(fmt)
     log.addHandler(h)
 
-    scheduler = BlockingScheduler(timezone=tz)
-    scheduler.add_job(buy, 'cron', second='0', minute='0', hour='*/2')
-    scheduler.add_job(sell, 'cron', second='0', minute='*/15')
+    scheduler = BlockingScheduler()
+    scheduler.add_job(buy, 'cron', second='0', minute=buyminute, hour=buyhour)
+    scheduler.add_job(sell, 'cron', second='0', minute=sellminute, hour=sellhour)
     print('任务已启动')
     try:
         scheduler.start()

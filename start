@@ -1,0 +1,2 @@
+#!/bin/sh
+cd `dirname $0`&&nohup python3 -u run.py > dthb.log 2>&1 &
