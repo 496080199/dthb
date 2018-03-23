@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 
+DB = 'huobipro.db'
+
 ACCKEY = "451ea17c-77ed704a-f3ferfref-af477"
 SECKEY = "6204fb72-bde5858c-57reffr0b-deba4"
 
-SYMBOL = 'QTUM/USDT'
+#QTUM
+QTUMSYMBOL = 'QTUM/USDT'
+QTUMAMOUNT = 0.1
+QTUMPERCENT = 7
 
-DB = 'huobipro.db'
 
-#buy
-buyhour="*/20"
-buyminute="0"
+QTUMBUYHOUR='*/5'
+QTUMBUYMINUTE='0'
 
-#sell
-sellhour="*"
-sellminute="*/15"
+QTUMSELLHOUR='*'
+QTUMSELLMINUTE='*/5'

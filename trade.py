@@ -41,16 +41,16 @@ def login():
 def getdatetime():
     dt=datetime.datetime.now(tz).isoformat()
     return dt
-def buy():
+def buy(symbol,amount):
     print(getdatetime()+'===开始执行买入任务...')
     exchange = login()
-    orderdata = exchange.create_market_buy_order(symbol=SYMBOL, amount=0.1)
+    orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
     time.sleep(5)
     if orderdata['info']['status'] != 'ok':
         exchange.cancel_order(orderdata['id'])
         print('订单取消')
         return 'False'
-    orderinfo = exchange.fetch_order(symbol=SYMBOL, id=orderdata['id'])
+    orderinfo = exchange.fetch_order(symbol=symbol, id=orderdata['id'])
     if orderinfo['status'] != 'closed':
         exchange.cancel_order(orderdata['id'])
         print('订单取消')
@@ -67,10 +67,10 @@ def buy():
     return 'True'
 
 
-def sell():
+def sell(symbol,percent):
     print(getdatetime()+'===开始执行卖出任务...')
     exchange = login()
-    sqldata = "SELECT id,amount,filled  from t_order WHERE process='False'"
+    sqldata = "SELECT id,amount,filled  from t_order WHERE process='False' AND symbol='"+str(symbol)+"'"
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     sqlresult = c.execute(sqldata)
@@ -85,29 +85,28 @@ def sell():
     print('总成本:' + str(sumamount))
     print('总数量:' + str(sumfilled))
     print('关联单:' + str(idlist))
-    orderbook = exchange.fetch_order_book(symbol=SYMBOL)
+    wantprofit = (percent / 100) + 1 * sumamount
+    orderbook = exchange.fetch_order_book(symbol=symbol)
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
     averageprice = (ask + bid) / 2
-    print('当前均价:' + str(averageprice))
-    profit=averageprice * sumfilled
-    wantprofit=1.07 * sumamount
+    profit = averageprice * sumfilled
     print('当前均价:' + str(averageprice)+',当前收益:'+str(profit)+',预期收益:' + str(wantprofit))
     if profit> wantprofit:
-        orderdata = exchange.create_market_sell_order(symbol=SYMBOL, amount=sumfilled)
+        orderdata = exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
         if orderdata['info']['status'] != 'ok':
             exchange.cancel_order(orderdata['id'])
             conn.close()
             print('订单取消')
             return 'False'
-        orderinfo = exchange.fetch_order(symbol=SYMBOL, id=orderdata['id'])
+        orderinfo = exchange.fetch_order(symbol=symbol, id=orderdata['id'])
         if orderinfo['status'] != 'closed':
             exchange.cancel_order(orderdata['id'])
             conn.close()
             print('订单取消')
             return 'False'
         for oid in idlist:
-            sqldata = "UPDATE t_order set process = 'True' WHERE ID='" + str(oid) + "'"
+            sqldata = "UPDATE t_order set process = 'True' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
             c.execute(sqldata)
             conn.commit()
             conn.close()
