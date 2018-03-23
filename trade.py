@@ -2,7 +2,7 @@
 
 import ccxt, time,datetime ,json,pytz
 import sqlite3
-from config_tpl import *
+from config import *
 
 tz = pytz.timezone('Asia/Shanghai')
 
