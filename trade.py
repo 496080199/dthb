@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import ccxt, time,datetime ,json,pytz
+import ccxt, time, datetime, json, pytz
 import sqlite3
 from config import *
 
@@ -23,7 +23,6 @@ except:
     pass
 
 
-
 def login():
     exchange = ccxt.huobipro()
     exchange.apiKey = ACCKEY
@@ -39,10 +38,12 @@ def login():
 
 
 def getdatetime():
-    dt=datetime.datetime.now(tz).isoformat()
+    dt = datetime.datetime.now(tz).isoformat()
     return dt
-def buy(symbol,amount):
-    print(getdatetime()+'===开始执行买入任务...')
+
+
+def buy(symbol, amount):
+    print(getdatetime() + '===开始执行买入任务...')
     exchange = login()
     orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
     time.sleep(5)
@@ -55,7 +56,7 @@ def buy(symbol,amount):
         exchange.cancel_order(orderdata['id'])
         print('订单取消')
         return 'False'
-    filledamount=float(orderinfo['info']['field-amount'])-float(orderinfo['info']['field-fees'])
+    filledamount = float(orderinfo['info']['field-amount']) - float(orderinfo['info']['field-fees'])
     sqldata = "INSERT INTO t_order (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
         orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
         orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','False')"
@@ -64,14 +65,14 @@ def buy(symbol,amount):
     c.execute(sqldata)
     conn.commit()
     conn.close()
-    print(getdatetime()+'===买入成功')
+    print(getdatetime() + '===买入成功')
     return 'True'
 
 
-def sell(symbol,percent):
-    print(getdatetime()+'===开始执行卖出任务...')
+def sell(symbol, percent):
+    print(getdatetime() + '===开始执行卖出任务...')
     exchange = login()
-    sqldata = "SELECT id,amount,filled  from t_order WHERE process='False' AND symbol='"+str(symbol)+"'"
+    sqldata = "SELECT id,amount,filled  from t_order WHERE process='False' AND symbol='" + str(symbol) + "'"
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     sqlresult = c.execute(sqldata)
@@ -85,15 +86,15 @@ def sell(symbol,percent):
         idlist.append(row[0])
     print('总成本:' + str(sumamount))
     print('总数量:' + str(sumfilled))
-    print('关联单:' + str(idlist))
+    print('关联单:' + str(len(idlist)))
     wantprofit = (percent / 100) + 1 * sumamount
     orderbook = exchange.fetch_order_book(symbol=symbol)
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
     averageprice = (ask + bid) / 2
     profit = averageprice * sumfilled * 0.98
-    print('当前均价:' + str(averageprice)+',当前收益:'+str(profit)+',预期收益:' + str(wantprofit))
-    if profit> wantprofit:
+    print('当前均价:' + str(averageprice) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit))
+    if profit > wantprofit:
         orderdata = exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
         if orderdata['info']['status'] != 'ok':
             exchange.cancel_order(orderdata['id'])
@@ -107,14 +108,15 @@ def sell(symbol,percent):
             print('订单取消')
             return 'False'
         for oid in idlist:
-            sqldata = "UPDATE t_order set process = 'True' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
+            sqldata = "UPDATE t_order set process = 'True' WHERE id='" + str(oid) + "' AND symbol='" + str(symbol) + "'"
             c.execute(sqldata)
             conn.commit()
-            conn.close()
-        print('卖出成功')
+            print('已更新订单' + str(oid) + '的状态')
+        conn.close()
+        print(getdatetime() + '===卖出成功')
         return 'True'
     conn.close()
-    print(getdatetime()+'===未达卖出条件')
+    print(getdatetime() + '===未达卖出条件')
     return 'False'
 
 
