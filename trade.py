@@ -1,49 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import ccxt, time, datetime, json, pytz
-import sqlite3
-from config import *
+from common import *
 
-tz = pytz.timezone('Asia/Shanghai')
-
-conn = sqlite3.connect(DB)
-c = conn.cursor()
-try:
-    c.execute('''CREATE TABLE t_order
-      (id INT PRIMARY KEY     NOT NULL,
-       dt   DATETIME   NOT NULL,
-       symbol  CHAR(30)   NOT NULL,
-       side    CHAR(10) NOT NULL,
-       amount DECIMAL(40,30) NOT NULL,
-       filled DECIMAL(40,30) NOT NULL,
-       process  BOOLEAN NOT NULL);''')
-    conn.commit()
-    conn.close()
-except:
-    pass
-
-
-def login():
-    exchange = ccxt.huobipro()
-    exchange.apiKey = ACCKEY
-    exchange.secret = SECKEY
-    return exchange
-
-    # balance=exchange.fetch_balance()['info']['data']['list']
-
-
-# for i in balance:
-#    if i['currency'] == 'usdt' and i['type'] == 'trade':
-#       print('可用USDT:'+i['balance'])
-
-
-def getdatetime():
-    dt = datetime.datetime.now(tz).isoformat()
-    return dt
-
-
-def buy(symbol, amount):
-    print(getdatetime() + '===开始执行买入任务...')
+def buy(symbol,amount,table):
+    print(getdatetime()+'=='+str(symbol)+'==开始执行买入任务...')
     exchange = login()
     orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
     time.sleep(5)
@@ -57,7 +17,7 @@ def buy(symbol, amount):
         print('订单取消')
         return 'False'
     filledamount = float(orderinfo['info']['field-amount']) - float(orderinfo['info']['field-fees'])
-    sqldata = "INSERT INTO t_order (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
+    sqldata = "INSERT INTO "+str(table)+" (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
         orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
         orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','False')"
     conn = sqlite3.connect(DB)
@@ -65,14 +25,14 @@ def buy(symbol, amount):
     c.execute(sqldata)
     conn.commit()
     conn.close()
-    print(getdatetime() + '===买入成功')
+    print(getdatetime() +'=='+str(symbol)+'==买入成功')
     return 'True'
 
 
-def sell(symbol, percent):
-    print(getdatetime() + '===开始执行卖出任务...')
+def sell(symbol,percent,table):
+    print(getdatetime()+'=='+str(symbol)+'==开始执行卖出任务...')
     exchange = login()
-    sqldata = "SELECT id,amount,filled  from t_order WHERE process='False' AND symbol='" + str(symbol) + "'"
+    sqldata = "SELECT id,amount,filled  from "+str(table)+" WHERE process='False' AND symbol='"+str(symbol)+"'"
     conn = sqlite3.connect(DB)
     c = conn.cursor()
     sqlresult = c.execute(sqldata)
@@ -108,15 +68,15 @@ def sell(symbol, percent):
             print('订单取消')
             return 'False'
         for oid in idlist:
-            sqldata = "UPDATE t_order set process = 'True' WHERE id='" + str(oid) + "' AND symbol='" + str(symbol) + "'"
+            sqldata = "UPDATE "+str(table)+" set process = 'True' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
             c.execute(sqldata)
             conn.commit()
             print('已更新订单' + str(oid) + '的状态')
         conn.close()
-        print(getdatetime() + '===卖出成功')
+        print(getdatetime() +'=='+str(symbol)+ '==卖出成功')
         return 'True'
     conn.close()
-    print(getdatetime() + '===未达卖出条件')
+    print(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
     return 'False'
 
 
