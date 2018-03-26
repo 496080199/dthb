@@ -47,7 +47,7 @@ def sell(symbol,percent,table):
     print('总成本:' + str(sumamount))
     print('总数量:' + str(sumfilled))
     print('关联单:' + str(len(idlist)))
-    wantprofit = (percent / 100) + 1 * sumamount
+    wantprofit = ((percent / 100) + 1) * sumamount
     orderbook = exchange.fetch_order_book(symbol=symbol)
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
