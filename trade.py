@@ -52,8 +52,9 @@ def sell(symbol,percent,table):
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
     averageprice = (ask + bid) / 2
-    profit = averageprice * sumfilled * 0.98
-    print('当前均价:' + str(averageprice) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit))
+    sumfilled = sumfilled * 0.98
+    profit = averageprice * sumfilled
+    print('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit))
     if profit > wantprofit:
         orderdata = exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
         if orderdata['info']['status'] != 'ok':
