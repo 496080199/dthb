@@ -27,6 +27,10 @@ def buy(symbol,amount,table):
     conn.commit()
     conn.close()
     log.warn(getdatetime() +'=='+str(symbol)+'==买入成功')
+    try:
+        del exchange
+    except:
+        pass
     return 'True'
 
 
@@ -79,6 +83,10 @@ def sell(symbol,percent,table):
         return 'True'
     conn.close()
     log.warn(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
+    try:
+        del exchange
+    except:
+        pass
     return 'False'
 
 
