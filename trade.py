@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 
 from common import *
+from log import log
 
 def buy(symbol,amount,table):
-    print(getdatetime()+'=='+str(symbol)+'==开始执行买入任务...')
+    log.warn(getdatetime()+'=='+str(symbol)+'==开始执行买入任务...')
     exchange = login()
     orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
     time.sleep(5)
     if orderdata['info']['status'] != 'ok':
         exchange.cancel_order(orderdata['id'])
-        print('订单取消')
+        log.warn('订单取消')
         return 'False'
     orderinfo = exchange.fetch_order(symbol=symbol, id=orderdata['id'])
     if orderinfo['status'] != 'closed':
         exchange.cancel_order(orderdata['id'])
-        print('订单取消')
+        log.warn('订单取消')
         return 'False'
     filledamount = float(orderinfo['info']['field-amount']) - float(orderinfo['info']['field-fees'])
     sqldata = "INSERT INTO "+str(table)+" (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
@@ -25,12 +26,12 @@ def buy(symbol,amount,table):
     c.execute(sqldata)
     conn.commit()
     conn.close()
-    print(getdatetime() +'=='+str(symbol)+'==买入成功')
+    log.warn(getdatetime() +'=='+str(symbol)+'==买入成功')
     return 'True'
 
 
 def sell(symbol,percent,table):
-    print(getdatetime()+'=='+str(symbol)+'==开始执行卖出任务...')
+    log.warn(getdatetime()+'=='+str(symbol)+'==开始执行卖出任务...')
     exchange = login()
     sqldata = "SELECT id,amount,filled  from "+str(table)+" WHERE process='False' AND symbol='"+str(symbol)+"'"
     conn = sqlite3.connect(DB)
@@ -44,9 +45,9 @@ def sell(symbol,percent,table):
         sumfilled += row[2]
         sumamount += row[1]
         idlist.append(row[0])
-    print('总成本:' + str(sumamount))
-    print('总数量:' + str(sumfilled))
-    print('关联单:' + str(len(idlist)))
+    log.warn('总成本:' + str(sumamount))
+    log.warn('总数量:' + str(sumfilled))
+    log.warn('关联单:' + str(len(idlist)))
     wantprofit = ((percent / 100) + 1) * sumamount
     orderbook = exchange.fetch_order_book(symbol=symbol)
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
@@ -54,30 +55,30 @@ def sell(symbol,percent,table):
     averageprice = (ask + bid) / 2
     sumfilled = sumfilled * 0.98
     profit = averageprice * sumfilled
-    print('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit))
+    log.warn('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit))
     if profit > wantprofit:
         orderdata = exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
         if orderdata['info']['status'] != 'ok':
             exchange.cancel_order(orderdata['id'])
             conn.close()
-            print('订单取消')
+            log.warn('订单取消')
             return 'False'
         orderinfo = exchange.fetch_order(symbol=symbol, id=orderdata['id'])
         if orderinfo['status'] != 'closed':
             exchange.cancel_order(orderdata['id'])
             conn.close()
-            print('订单取消')
+            log.warn('订单取消')
             return 'False'
         for oid in idlist:
             sqldata = "UPDATE "+str(table)+" set process = 'True' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
             c.execute(sqldata)
             conn.commit()
-            print('已更新订单' + str(oid) + '的状态')
+            log.warn('已更新订单' + str(oid) + '的状态')
         conn.close()
-        print(getdatetime() +'=='+str(symbol)+ '==卖出成功')
+        log.warn(getdatetime() +'=='+str(symbol)+ '==卖出成功')
         return 'True'
     conn.close()
-    print(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
+    log.warn(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
     return 'False'
 
 
@@ -85,4 +86,4 @@ def sell(symbol,percent,table):
 
 
 
-    #   print(json.dumps(exchange.fetchOrders(symbol=SYMBOL, params={'status': 1}), indent=4))
+    #   log.warn(json.dumps(exchange.fetchOrders(symbol=SYMBOL, params={'status': 1}), indent=4))
