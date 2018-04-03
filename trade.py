@@ -62,7 +62,7 @@ def sell(symbol,percent,table):
     if sumfilled == 0:
         profitprice=0
     else:
-        profitprice = profit / sumfilled
+        profitprice = wantprofit / sumfilled
     log.warn('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit) + ',预期均价:' + str(profitprice))
     if profit > wantprofit:
         orderdata = exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
