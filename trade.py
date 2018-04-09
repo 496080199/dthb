@@ -65,18 +65,11 @@ def sell(symbol,percent,table):
         profitprice = wantprofit / sumfilled
     log.warn('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit) + ',预期均价:' + str(profitprice))
     if profit > wantprofit:
-        exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
-        #if orderdata['info']['status'] != 'ok':
-        #    exchange.cancel_order(orderdata['id'])
-         #   conn.close()
-        #    log.warn('订单取消')
-         #   return 'False'
-        #orderinfo = exchange.fetch_order(symbol=symbol, id=orderdata['id'])
-        #if orderinfo['status'] != 'closed':
-         #   exchange.cancel_order(orderdata['id'])
-        #    conn.close()
-         #   log.warn('订单取消')
-         #   return 'False'
+        try:
+            exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
+        except:
+            log.warn('订单异常')
+            return 'False'
         for oid in idlist:
             sqldata = "UPDATE "+str(table)+" set process = 'True' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
             c.execute(sqldata)
