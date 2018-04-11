@@ -18,6 +18,7 @@ def sellcurrency():
     try:
         sell(QTUMSYMBOL, QTUMPERCENT, QTUMTABLE)
         sell(EOSSYMBOL, EOSPERCENT, EOSTABLE)
+        sell(NEOSYMBOL, NEOPERCENT, NEOTABLE)
         sell(ETHSYMBOL, ETHPERCENT, ETHTABLE)
     except:
         log.warn('异常退出')
