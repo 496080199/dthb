@@ -8,6 +8,7 @@ def buycurrency():
         buy(QTUMSYMBOL, QTUMAMOUNT, QTUMTABLE)
         buy(EOSSYMBOL, EOSAMOUNT, EOSTABLE)
         buy(NEOSYMBOL, NEOAMOUNT, NEOTABLE)
+        buy(ETHSYMBOL, ETHAMOUNT, ETHTABLE)
     except:
         pass
     return ''
@@ -17,7 +18,7 @@ def sellcurrency():
     try:
         sell(QTUMSYMBOL, QTUMPERCENT, QTUMTABLE)
         sell(EOSSYMBOL, EOSPERCENT, EOSTABLE)
-        sell(NEOSYMBOL, NEOPERCENT, NEOTABLE)
+        sell(ETHSYMBOL, ETHPERCENT, ETHTABLE)
     except:
         pass
     return ''
