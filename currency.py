@@ -18,6 +18,7 @@ def sellcurrency():
     try:
         sell(QTUMSYMBOL, QTUMPERCENT, QTUMTABLE)
         sell(EOSSYMBOL, EOSPERCENT, EOSTABLE)
+        sell(ETHSYMBOL, ETHPERCENT, ETHTABLE)
     except:
         log.warn('异常退出')
         pass
@@ -29,11 +30,6 @@ def hardbuycurrency():
     except:
         log.warn('异常退出')
         pass
-def hardsellcurrency():
-    try:
-        sell(ETHSYMBOL, ETHPERCENT, ETHTABLE)
-    except:
-        log.warn('异常退出')
-        pass
+
 
 
