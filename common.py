@@ -64,6 +64,20 @@ try:
 
 except:
     pass
+
+try:
+    c.execute('''CREATE TABLE t_xrp_order
+      (id INT PRIMARY KEY     NOT NULL,
+       dt   DATETIME   NOT NULL,
+       symbol  CHAR(30)   NOT NULL,
+       side    CHAR(10) NOT NULL,
+       amount DECIMAL(40,30) NOT NULL,
+       filled DECIMAL(40,30) NOT NULL,
+       process  BOOLEAN NOT NULL);''')
+    conn.commit()
+
+except:
+    pass
 conn.close()
 
 
