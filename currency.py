@@ -35,8 +35,12 @@ def sellcurrency():
 
 def hardbuycurrency():
     try:
-        buy(ETHSYMBOL, ETHAMOUNT, ETHTABLE)
-        buy(XRPSYMBOL, XRPAMOUNT, XRPTABLE)
+        if belowavg():
+            buy(ETHSYMBOL, ETHAMOUNT*2, ETHTABLE)
+            buy(XRPSYMBOL, XRPAMOUNT*2, XRPTABLE)
+        else:
+            buy(ETHSYMBOL, ETHAMOUNT, ETHTABLE)
+            buy(XRPSYMBOL, XRPAMOUNT, XRPTABLE)
     except:
         log.warn('异常退出')
         pass
