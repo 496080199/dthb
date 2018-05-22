@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 
 from trade import *
+from fxhgbi import *
 
 
 def buycurrency():
     try:
-        buy(QTUMSYMBOL, QTUMAMOUNT, QTUMTABLE)
-        buy(EOSSYMBOL, EOSAMOUNT, EOSTABLE)
-        buy(NEOSYMBOL, NEOAMOUNT, NEOTABLE)
+        if belowavg():
+            buy(QTUMSYMBOL, QTUMAMOUNT * 2, QTUMTABLE)
+            buy(EOSSYMBOL, EOSAMOUNT * 2, EOSTABLE)
+            buy(NEOSYMBOL, NEOAMOUNT * 2, NEOTABLE)
+        else:
+            buy(QTUMSYMBOL, QTUMAMOUNT, QTUMTABLE)
+            buy(EOSSYMBOL, EOSAMOUNT, EOSTABLE)
+            buy(NEOSYMBOL, NEOAMOUNT, NEOTABLE)
     except:
         log.warn('异常退出')
         pass
@@ -26,6 +32,7 @@ def sellcurrency():
         pass
     return ''
 
+
 def hardbuycurrency():
     try:
         buy(ETHSYMBOL, ETHAMOUNT, ETHTABLE)
@@ -33,6 +40,3 @@ def hardbuycurrency():
     except:
         log.warn('异常退出')
         pass
-
-
-
