@@ -53,9 +53,9 @@ if __name__ == '__main__':
                       args=['buytrade', BUYHOUR, BUYMINUTE])
     scheduler.add_job(increfreq, 'interval', hours=1, name='hardincrefreq', id='hardincrefreq',
                       args=['hardbuytrade', HARDBUYHOUR, HARDBUYMINUTE])
-    scheduler.add_job(backfreq, 'interval', hours=1, name='increfreq', id='increfreq',
+    scheduler.add_job(backfreq, 'interval', hours=1, name='backfreq', id='backfreq',
                       args=['buytrade', BUYHOUR, BUYMINUTE])
-    scheduler.add_job(backfreq, 'interval', hours=1, name='hardincrefreq', id='hardincrefreq',
+    scheduler.add_job(backfreq, 'interval', hours=1, name='hardbackfreq', id='hardbackfreq',
                       args=['hardbuytrade', HARDBUYHOUR, HARDBUYMINUTE])
 
     log.warn('任务已启动')
