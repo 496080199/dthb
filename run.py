@@ -22,7 +22,7 @@ if __name__ == '__main__':
         for s in data:
             sumall += s
         avg = sumall / lendata
-        if data[-1] > 0 and avg > 0 and data[-1] < avg*0.9:
+        if data[-1] > 0 and avg > 0 and data[-1] < avg*0.85:
             job = scheduler.get_job(job_id=jobid)
             hour = None
 
@@ -44,9 +44,15 @@ if __name__ == '__main__':
         avg = sumall / lendata
         if data[-1] > 0 and avg > 0 and data[-1] > avg:
             job = scheduler.get_job(job_id=jobid)
-            job.reschedule(trigger='cron', second='59', minute=execminute, hour='*/'+str(exechour))
-            scheduler.print_jobs()
-            log.warn('恢复买入频率成功')
+            hour = None
+
+            for f in job.trigger.fields:
+                if f.name == 'hour':
+                    hour = f
+            if round(int(str(hour).split('/')[1])) != round(int(exechour)):
+                job.reschedule(trigger='cron', second='59', minute=execminute, hour='*/'+str(exechour))
+                scheduler.print_jobs()
+                log.warn('恢复买入频率成功')
         return ''
 
     scheduler.add_job(increfreq, 'interval', hours=1, name='increfreq', id='increfreq',
