@@ -35,11 +35,27 @@ if __name__ == '__main__':
                 scheduler.print_jobs()
                 log.warn('提高买入频率成功')
         return ''
-
+    def backfreq(jobid, exechour, execminute):
+        data = get_gbi_data()
+        lendata = len(data)
+        sumall = 0.0
+        for s in data:
+            sumall += s
+        avg = sumall / lendata
+        if data[-1] > 0 and avg > 0 and data[-1] > avg:
+            job = scheduler.get_job(job_id=jobid)
+            job.reschedule(trigger='cron', second='59', minute=execminute, hour='*/'+str(exechour))
+            scheduler.print_jobs()
+            log.warn('恢复买入频率成功')
+        return ''
 
     scheduler.add_job(increfreq, 'interval', hours=1, name='increfreq', id='increfreq',
                       args=['buytrade', BUYHOUR, BUYMINUTE])
     scheduler.add_job(increfreq, 'interval', hours=1, name='hardincrefreq', id='hardincrefreq',
+                      args=['hardbuytrade', HARDBUYHOUR, HARDBUYMINUTE])
+    scheduler.add_job(backfreq, 'interval', hours=1, name='increfreq', id='increfreq',
+                      args=['buytrade', BUYHOUR, BUYMINUTE])
+    scheduler.add_job(backfreq, 'interval', hours=1, name='hardincrefreq', id='hardincrefreq',
                       args=['hardbuytrade', HARDBUYHOUR, HARDBUYMINUTE])
 
     log.warn('任务已启动')
