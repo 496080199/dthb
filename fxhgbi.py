@@ -47,4 +47,15 @@ def belowavg():
         return True
     else:
         return False
+def overavg():
+    data = get_gbi_data()
+    lendata = len(data)
+    sumall = 0.0
+    for s in data:
+        sumall += s
+    avg = sumall / lendata
+    if data[-1] > 0 and avg > 0 and data[-1] > avg*1.15:
+        return True
+    else:
+        return False
 
