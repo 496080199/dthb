@@ -24,7 +24,7 @@ if __name__ == '__main__':
         for s in data:
             sumall += s
         avg = sumall / lendata
-        if data[-1] > 0 and avg > 0 and data[-1] < avg*0.85:
+        if data[-1] > 0 and avg > 0 and data[-1] < avg*0.9:
             job = scheduler.get_job(job_id=jobid)
             hour = None
 
@@ -37,6 +37,7 @@ if __name__ == '__main__':
                 sc = open('scheduler.log', 'a+')
                 sc.write(str(getdatetime() + '\n'))
                 scheduler.print_jobs(out=sc)
+                sc.close()
                 log.warn('提高买入频率成功')
         return ''
     def backfreq(jobid, exechour, execminute):
@@ -58,16 +59,17 @@ if __name__ == '__main__':
                 sc = open('scheduler.log', 'a+')
                 sc.write(str(getdatetime() + '\n'))
                 scheduler.print_jobs(out=sc)
+                sc.close()
                 log.warn('恢复买入频率成功')
         return ''
 
-    scheduler.add_job(increfreq, 'interval', hours=1, name='increfreq', id='increfreq',
+    scheduler.add_job(increfreq, 'cron', second='0', minute='50', name='increfreq', id='increfreq',
                       args=['buytrade', BUYHOUR, BUYMINUTE])
-    scheduler.add_job(increfreq, 'interval', hours=1, name='hardincrefreq', id='hardincrefreq',
+    scheduler.add_job(increfreq, 'cron', second='0', minute='51', name='hardincrefreq', id='hardincrefreq',
                       args=['hardbuytrade', HARDBUYHOUR, HARDBUYMINUTE])
-    scheduler.add_job(backfreq, 'interval', hours=1, name='backfreq', id='backfreq',
+    scheduler.add_job(backfreq, 'cron', second='0', minute='55', name='backfreq', id='backfreq',
                       args=['buytrade', BUYHOUR, BUYMINUTE])
-    scheduler.add_job(backfreq, 'interval', hours=1, name='hardbackfreq', id='hardbackfreq',
+    scheduler.add_job(backfreq, 'cron', second='0', minute='56', name='hardbackfreq', id='hardbackfreq',
                       args=['hardbuytrade', HARDBUYHOUR, HARDBUYMINUTE])
 
     log.warn('任务已启动')
