@@ -19,8 +19,9 @@ def buycurrency():
             buy(QTUMSYMBOL, QTUMAMOUNT, QTUMTABLE)
             buy(EOSSYMBOL, EOSAMOUNT, EOSTABLE)
             buy(NEOSYMBOL, NEOAMOUNT, NEOTABLE)
-    except:
-        log.warn('异常退出')
+    except Exception as e:
+
+        log.warn('买入异常退出:'+str(e))
         pass
     return ''
 
@@ -32,8 +33,8 @@ def sellcurrency():
         sell(NEOSYMBOL, NEOPERCENT, NEOTABLE)
         sell(ETHSYMBOL, ETHPERCENT, ETHTABLE)
         sell(XRPSYMBOL, XRPPERCENT, XRPTABLE)
-    except:
-        log.warn('异常退出')
+    except Exception as e:
+        log.warn('卖出异常退出:'+str(e))
         pass
     return ''
 
@@ -51,6 +52,6 @@ def hardbuycurrency():
             log.warn('正常买入')
             buy(ETHSYMBOL, ETHAMOUNT, ETHTABLE)
             buy(XRPSYMBOL, XRPAMOUNT, XRPTABLE)
-    except:
-        log.warn('异常退出')
+    except Exception as e:
+        log.warn('硬买入异常退出:'+str(e))
         pass
