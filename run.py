@@ -2,6 +2,9 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from currency import *
 
+
+
+
 if __name__ == '__main__':
 
     scheduler = BlockingScheduler()
@@ -11,7 +14,6 @@ if __name__ == '__main__':
                       id='selltrade')
     scheduler.add_job(hardbuycurrency, 'cron', second='59', minute=HARDBUYMINUTE, hour='*/'+str(HARDBUYHOUR), name='hardbuytrade',
                       id='hardbuytrade')
-
 
 
 
@@ -32,7 +34,9 @@ if __name__ == '__main__':
             if round(int(str(hour).split('/')[1])) != round(int(exechour)/2):
                 hour = '*/'+str(round(int(exechour) / 2))
                 job.reschedule(trigger='cron', second='59', minute=execminute, hour=hour)
-                scheduler.print_jobs()
+                sc = open('scheduler.log', 'a+')
+                sc.write(str(getdatetime() + '\n'))
+                scheduler.print_jobs(out=sc)
                 log.warn('提高买入频率成功')
         return ''
     def backfreq(jobid, exechour, execminute):
@@ -51,7 +55,9 @@ if __name__ == '__main__':
                     hour = f
             if round(int(str(hour).split('/')[1])) != round(int(exechour)):
                 job.reschedule(trigger='cron', second='59', minute=execminute, hour='*/'+str(exechour))
-                scheduler.print_jobs()
+                sc = open('scheduler.log', 'a+')
+                sc.write(str(getdatetime() + '\n'))
+                scheduler.print_jobs(out=sc)
                 log.warn('恢复买入频率成功')
         return ''
 
