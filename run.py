@@ -7,13 +7,13 @@ if __name__ == '__main__':
 
     scheduler.add_job(buycurrency, 'cron', second='59', minute=BUYMINUTE, hour='*/' + str(BUYHOUR), name='buytrade',
                       id='buytrade')
-    scheduler.add_job(sellcurrency, 'cron', second='0', minute=SELLMINUTE, hour=SELLHOUR, name='selltrade',
+    scheduler.add_job(sellcurrency, 'cron', second='30', minute=SELLMINUTE, hour=SELLHOUR, name='selltrade',
                       id='selltrade')
     scheduler.add_job(hardbuycurrency, 'cron', second='59', minute=HARDBUYMINUTE, hour='*/' + str(HARDBUYHOUR),
                       name='hardbuytrade',
                       id='hardbuytrade')
 
-    scheduler.add_job(updategbi, 'cron', second='30', minute='*/20')
+    scheduler.add_job(updategbi, 'cron', second='0', minute='*/20')
 
     scheduler.add_job(increfreq, 'cron', second='0', minute='50', name='increfreq', id='increfreq',
                       args=['buytrade', BUYHOUR, BUYMINUTE])
