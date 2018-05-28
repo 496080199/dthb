@@ -61,7 +61,7 @@ def sell(symbol,percent,table):
     averageprice = Decimal((ask + bid) / 2)
     sumfilled = sumfilled * Decimal(0.98)
     profit = averageprice * sumfilled
-    if int(sumfilled) == 0:
+    if sumfilled == Decimal(0):
         profitprice=Decimal(0)
     else:
         profitprice = wantprofit / sumfilled
