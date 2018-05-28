@@ -59,7 +59,7 @@ def sell(symbol,percent,table):
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
     averageprice = Decimal((ask + bid) / 2)
-    sumfilled = sumfilled * 0.98
+    sumfilled = sumfilled * Decimal(0.98)
     profit = averageprice * sumfilled
     if int(sumfilled) == 0:
         profitprice=Decimal(0)
