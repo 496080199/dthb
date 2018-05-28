@@ -1,16 +1,29 @@
 # -*- coding: utf-8 -*-
 
 import ccxt, time,datetime ,json,pytz
-import sqlite3
+#import sqlite3
+import pymysql
 from config import *
 
 tz = pytz.timezone('Asia/Shanghai')
 
-conn = sqlite3.connect(DB)
+#conn = sqlite3.connect(DB)
+conn =pymysql.connect(DBHOST,DBUSER, DBPASS, DB)
+
 c = conn.cursor()
 try:
+    c.execute('''CREATE TABLE t_gbi 
+      (dt   DATETIME   NOT NULL,
+       davg DECIMAL(40,30) NOT NULL,
+       lastdata DECIMAL(40,30) NOT NULL);
+     ''')
+    c.execute('''CREATE INDEX idx_gbi ON t_gbi(dt DESC);
+      ''')
+except:
+    pass
+try:
     c.execute('''CREATE TABLE t_qtum_order
-      (id INT PRIMARY KEY     NOT NULL,
+      (id CHAR(20) PRIMARY KEY     NOT NULL,
        dt   DATETIME   NOT NULL,
        symbol  CHAR(30)   NOT NULL,
        side    CHAR(10) NOT NULL,
@@ -24,7 +37,7 @@ except:
 
 try:
     c.execute('''CREATE TABLE t_eos_order
-      (id INT PRIMARY KEY     NOT NULL,
+      (id CHAR(20) PRIMARY KEY     NOT NULL,
        dt   DATETIME   NOT NULL,
        symbol  CHAR(30)   NOT NULL,
        side    CHAR(10) NOT NULL,
@@ -38,7 +51,7 @@ except:
 
 try:
     c.execute('''CREATE TABLE t_neo_order
-      (id INT PRIMARY KEY     NOT NULL,
+      (id CHAR(20) PRIMARY KEY     NOT NULL,
        dt   DATETIME   NOT NULL,
        symbol  CHAR(30)   NOT NULL,
        side    CHAR(10) NOT NULL,
@@ -53,7 +66,7 @@ except:
 
 try:
     c.execute('''CREATE TABLE t_eth_order
-      (id INT PRIMARY KEY     NOT NULL,
+      (id CHAR(20) PRIMARY KEY     NOT NULL,
        dt   DATETIME   NOT NULL,
        symbol  CHAR(30)   NOT NULL,
        side    CHAR(10) NOT NULL,
@@ -67,7 +80,7 @@ except:
 
 try:
     c.execute('''CREATE TABLE t_xrp_order
-      (id INT PRIMARY KEY     NOT NULL,
+      (id CHAR(20) PRIMARY KEY     NOT NULL,
        dt   DATETIME   NOT NULL,
        symbol  CHAR(30)   NOT NULL,
        side    CHAR(10) NOT NULL,
@@ -81,6 +94,9 @@ except:
 conn.close()
 
 
+def opensqlconn():
+    conn = pymysql.connect(DBHOST, DBUSER, DBPASS, DB)
+    return conn
 
 def login():
     exchange = ccxt.huobipro()

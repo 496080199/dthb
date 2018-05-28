@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import time, requests
-from datetime import datetime, timedelta
+from datetime import timedelta
+from common import *
+
+
 
 headers = {
     'Host': 'api.feixiaohao.com',
@@ -26,7 +29,7 @@ def datetime_to_timestamp(datetime_obj):
 
 
 def get_gbi_data():
-    now = datetime.now()
+    now = datetime.datetime.now()
     last = now + timedelta(days=-300)
     r = requests.get('https://api.feixiaohao.com/gbi/' + str(datetime_to_timestamp(last)) + '/' + str(
         datetime_to_timestamp(now)) + '/',headers=headers).json()
@@ -35,31 +38,54 @@ def get_gbi_data():
         data.append(value[1])
     return data
 
-
-def belowavg():
+def updategbi():
     data = get_gbi_data()
     lendata = len(data)
     sumall = 0.0
     for s in data:
         sumall += s
-    avg = sumall / lendata
-    print(data[-1], avg)
-    if data[-1] > 0 and avg > 0 and data[-1] < avg:
+    davg = sumall / lendata
+    sqldata = "INSERT INTO t_gbi (dt,davg,lastdata) VALUES ('"+str(datetime.datetime.now())+"','"+str(davg)+"','"+str(data[-1])+"');"
+    deletesqldata = "DELETE FROM t_gbi WHERE dt < '"+str(datetime.datetime.now() +timedelta(days=-7))+"';"
+    conn = opensqlconn()
+    c = conn.cursor()
+    c.execute(sqldata)
+    conn.commit()
+    conn.close()
+    conn = opensqlconn()
+    c = conn.cursor()
+    c.execute(deletesqldata)
+    conn.commit()
+    conn.close()
+    return ''
+
+def getdavglastdata():
+    sqldata = "select davg,lastdata from t_gbi order by dt desc limit 1;"
+    conn = opensqlconn()
+    c = conn.cursor()
+    sqlresult = c.execute(sqldata)
+    lastdata = 0.0
+    davg = 0.0
+    for row in sqlresult:
+        davg = float(row[0])
+        lastdata = float(row[1])
+    return davg,lastdata
+
+def belowavg():
+    davg,lastdata=getdavglastdata()
+    if lastdata > 0 and davg > 0 and lastdata < davg:
         return True
     else:
         return False
 def overavg():
-    data = get_gbi_data()
-    lendata = len(data)
-    sumall = 0.0
-    for s in data:
-        sumall += s
-    avg = sumall / lendata
-    print(data[-1], avg*1.15)
-    if data[-1] > 0 and avg > 0 and data[-1] > avg*1.15:
+    davg, lastdata = getdavglastdata()
+    if lastdata > 0 and davg > 0 and lastdata > davg*1.15:
         return True
     else:
         return False
+
+
+
 
 if __name__ == '__main__':
     print('belowavg', belowavg())

@@ -8,14 +8,15 @@ from common import *
 scheduler = BlockingScheduler(timezone=tz)
 
 
+def printjobstolog():
+    sc = open('scheduler.log', 'a+')
+    sc.write(str(getdatetime() + '\n'))
+    scheduler.print_jobs(out=sc)
+    sc.close()
+
 def increfreq(jobid, exechour, execminute):
-    data = get_gbi_data()
-    lendata = len(data)
-    sumall = 0.0
-    for s in data:
-        sumall += s
-    avg = sumall / lendata
-    if data[-1] > 0 and avg > 0 and data[-1] < avg * 0.9:
+    davg, lastdata = getdavglastdata()
+    if lastdata > 0 and davg > 0 and lastdata < davg * 0.9:
         job = scheduler.get_job(job_id=jobid)
         hour = None
 
@@ -25,22 +26,14 @@ def increfreq(jobid, exechour, execminute):
         if round(int(str(hour).split('/')[1])) != round(int(exechour) / 2):
             hour = '*/' + str(round(int(exechour) / 2))
             job.reschedule(trigger='cron', second='59', minute=execminute, hour=hour)
-            sc = open('scheduler.log', 'a+')
-            sc.write(str(getdatetime() + '\n'))
-            scheduler.print_jobs(out=sc)
-            sc.close()
+            printjobstolog()
             log.warn('提高买入频率成功')
     return ''
 
 
 def backfreq(jobid, exechour, execminute):
-    data = get_gbi_data()
-    lendata = len(data)
-    sumall = 0.0
-    for s in data:
-        sumall += s
-    avg = sumall / lendata
-    if data[-1] > 0 and avg > 0 and data[-1] > avg:
+    davg, lastdata = getdavglastdata()
+    if lastdata > 0 and davg > 0 and lastdata > davg:
         job = scheduler.get_job(job_id=jobid)
         hour = None
 
@@ -49,10 +42,7 @@ def backfreq(jobid, exechour, execminute):
                 hour = f
         if round(int(str(hour).split('/')[1])) != round(int(exechour)):
             job.reschedule(trigger='cron', second='59', minute=execminute, hour='*/' + str(exechour))
-            sc = open('scheduler.log', 'a+')
-            sc.write(str(getdatetime() + '\n'))
-            scheduler.print_jobs(out=sc)
-            sc.close()
+            printjobstolog()
             log.warn('恢复买入频率成功')
     return ''
 

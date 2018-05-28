@@ -13,6 +13,8 @@ if __name__ == '__main__':
                       name='hardbuytrade',
                       id='hardbuytrade')
 
+    scheduler.add_job(updategbi, 'cron', second='30', minute='*/20')
+
     scheduler.add_job(increfreq, 'cron', second='0', minute='50', name='increfreq', id='increfreq',
                       args=['buytrade', BUYHOUR, BUYMINUTE])
     scheduler.add_job(increfreq, 'cron', second='0', minute='51', name='hardincrefreq', id='hardincrefreq',
@@ -24,6 +26,7 @@ if __name__ == '__main__':
 
     log.warn('任务已启动')
     scheduler.print_jobs()
+    printjobstolog()
 
     try:
         scheduler.start()

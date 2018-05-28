@@ -21,7 +21,7 @@ def buy(symbol,amount,table):
     sqldata = "INSERT INTO "+str(table)+" (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
         orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
         orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','False')"
-    conn = sqlite3.connect(DB)
+    conn = opensqlconn()
     c = conn.cursor()
     c.execute(sqldata)
     conn.commit()
@@ -38,7 +38,7 @@ def sell(symbol,percent,table):
     log.warn(getdatetime()+'=='+str(symbol)+'==开始执行卖出任务...')
     exchange = login()
     sqldata = "SELECT id,amount,filled  from "+str(table)+" WHERE process='False' AND symbol='"+str(symbol)+"'"
-    conn = sqlite3.connect(DB)
+    conn = opensqlconn()
     c = conn.cursor()
     sqlresult = c.execute(sqldata)
     conn.commit()
