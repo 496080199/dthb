@@ -20,7 +20,7 @@ def buy(symbol,amount,table):
     filledamount = float(orderinfo['info']['field-amount']) - float(orderinfo['info']['field-fees'])
     sqldata = "INSERT INTO "+str(table)+" (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
         orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
-        orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','False')"
+        orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','0')"
     conn = opensqlconn()
     c = conn.cursor()
     c.execute(sqldata)
@@ -37,7 +37,7 @@ def buy(symbol,amount,table):
 def sell(symbol,percent,table):
     log.warn(getdatetime()+'=='+str(symbol)+'==开始执行卖出任务...')
     exchange = login()
-    sqldata = "SELECT id,amount,filled  from "+str(table)+" WHERE process='False' AND symbol='"+str(symbol)+"'"
+    sqldata = "SELECT id,amount,filled  from "+str(table)+" WHERE process='0' AND symbol='"+str(symbol)+"'"
     conn = opensqlconn()
     c = conn.cursor()
     sqlresult = c.execute(sqldata)
@@ -71,7 +71,7 @@ def sell(symbol,percent,table):
             log.warn('订单异常')
             return 'False'
         for oid in idlist:
-            sqldata = "UPDATE "+str(table)+" set process = 'True' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
+            sqldata = "UPDATE "+str(table)+" set process = '1' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
             c.execute(sqldata)
             conn.commit()
             log.warn('已更新订单' + str(oid) + '的状态')
