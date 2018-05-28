@@ -43,6 +43,7 @@ def belowavg():
     for s in data:
         sumall += s
     avg = sumall / lendata
+    print(data[-1], avg)
     if data[-1] > 0 and avg > 0 and data[-1] < avg:
         return True
     else:
@@ -54,9 +55,14 @@ def overavg():
     for s in data:
         sumall += s
     avg = sumall / lendata
+    print(data[-1], avg*1.15)
     if data[-1] > 0 and avg > 0 and data[-1] > avg*1.15:
         return True
     else:
         return False
+
+if __name__ == '__main__':
+    print('belowavg', belowavg())
+    print('overavg', overavg())
 
 
