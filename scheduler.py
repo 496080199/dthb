@@ -5,7 +5,7 @@ from fxhgbi import *
 from log import *
 from common import *
 
-scheduler = BlockingScheduler()
+scheduler = BlockingScheduler(timezone=tz)
 
 
 def increfreq(jobid, exechour, execminute):
