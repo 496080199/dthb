@@ -63,7 +63,8 @@ def getdavglastdata():
     sqldata = "select davg,lastdata from t_gbi order by dt desc limit 1;"
     conn = opensqlconn()
     c = conn.cursor()
-    sqlresult = c.execute(sqldata)
+    c.execute(sqldata)
+    sqlresult = c.fetchall()
     lastdata = 0.0
     davg = 0.0
     for row in sqlresult:

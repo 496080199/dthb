@@ -40,7 +40,8 @@ def sell(symbol,percent,table):
     sqldata = "SELECT id,amount,filled  from "+str(table)+" WHERE process='0' AND symbol='"+str(symbol)+"'"
     conn = opensqlconn()
     c = conn.cursor()
-    sqlresult = c.execute(sqldata)
+    c.execute(sqldata)
+    sqlresult = c.fetchall()
     conn.commit()
     sumfilled = 0.0
     sumamount = 0.0
