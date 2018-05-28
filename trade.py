@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from decimal import Decimal
 from common import *
 from log import log
 
@@ -43,8 +44,8 @@ def sell(symbol,percent,table):
     c.execute(sqldata)
     sqlresult = c.fetchall()
     conn.commit()
-    sumfilled = 0.0
-    sumamount = 0.0
+    sumfilled = Decimal(0.0)
+    sumamount = Decimal(0.0)
     idlist = []
     for row in sqlresult:
         sumfilled += row[2]
@@ -53,15 +54,15 @@ def sell(symbol,percent,table):
     log.warn('总成本:' + str(sumamount))
     log.warn('总数量:' + str(sumfilled))
     log.warn('关联单:' + str(len(idlist)))
-    wantprofit = ((percent / 100) + 1) * sumamount
+    wantprofit = ((Decimal(percent) / 100) + 1) * sumamount
     orderbook = exchange.fetch_order_book(symbol=symbol)
     bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
     ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
-    averageprice = (ask + bid) / 2
+    averageprice = Decimal((ask + bid) / 2)
     sumfilled = sumfilled * 0.98
     profit = averageprice * sumfilled
-    if sumfilled == 0:
-        profitprice=0
+    if int(sumfilled) == 0:
+        profitprice=Decimal(0)
     else:
         profitprice = wantprofit / sumfilled
     log.warn('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit) + ',预期均价:' + str(profitprice))
@@ -86,6 +87,9 @@ def sell(symbol,percent,table):
     except:
         pass
     return 'False'
+
+if __name__ == '__main__':
+    sell(QTUMSYMBOL, QTUMPERCENT, QTUMTABLE)
 
 
 
