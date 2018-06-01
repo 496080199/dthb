@@ -13,7 +13,7 @@ if __name__ == '__main__':
                       name='hardbuytrade',
                       id='hardbuytrade')
 
-    scheduler.add_job(updategbi, 'cron', second='0', minute='*/20')
+    scheduler.add_job(updategbi, 'cron', second='0', minute='*/30')
 
     scheduler.add_job(increfreq, 'cron', second='0', minute='50', name='increfreq', id='increfreq',
                       args=['buytrade', BUYHOUR, BUYMINUTE])
