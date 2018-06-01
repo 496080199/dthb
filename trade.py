@@ -7,6 +7,7 @@ from log import log
 def buy(symbol,amount,table):
     log.warn(getdatetime()+'=='+str(symbol)+'==开始执行买入任务...')
     exchange = login()
+    exchange.options['createMarketBuyOrderRequiresPrice'] = False
     orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
     time.sleep(5)
     if orderdata['info']['status'] != 'ok':
