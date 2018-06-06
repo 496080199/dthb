@@ -33,7 +33,7 @@ def increfreq(jobid, exechour, execminute):
 
 def backfreq(jobid, exechour, execminute):
     davg, lastdata = getdavglastdata()
-    if lastdata > 0 and davg > 0 and lastdata > davg:
+    if lastdata > 0 and davg > 0 and lastdata > davg * 0.95:
         job = scheduler.get_job(job_id=jobid)
         hour = None
 
