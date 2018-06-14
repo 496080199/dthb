@@ -16,7 +16,7 @@ def printjobstolog():
 
 def increfreq(jobid, exechour, execminute):
     davg, lastdata = getdavglastdata()
-    if lastdata > 0 and davg > 0 and lastdata < davg * 0.9:
+    if lastdata > 0 and davg > 0 and lastdata < davg * float(FREQ):
         job = scheduler.get_job(job_id=jobid)
         hour = None
 
@@ -33,7 +33,7 @@ def increfreq(jobid, exechour, execminute):
 
 def backfreq(jobid, exechour, execminute):
     davg, lastdata = getdavglastdata()
-    if lastdata > 0 and davg > 0 and lastdata > davg * 0.9:
+    if lastdata > 0 and davg > 0 and lastdata > davg * float(FREQ):
         job = scheduler.get_job(job_id=jobid)
         hour = None
 
