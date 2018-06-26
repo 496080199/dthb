@@ -155,10 +155,10 @@ def checkbalance():
     f.close()
     if leftusdt < Decimal(LEFTUSDT) and maildate != datetime.date.today():
         ret = mail('USDT数量少于'+str(LEFTUSDT), 'HB余额不足')
-    if ret:
-        f = open(mf, 'wb')
-        pickle.dump(datetime.date.today(), f)
-        f.close()
+        if ret:
+            f = open(mf, 'wb')
+            pickle.dump(datetime.date.today(), f)
+            f.close()
 
 
 if __name__ == '__main__':
