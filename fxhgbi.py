@@ -103,13 +103,13 @@ def getdavglastdata():
 
 def belowavg():
     davg,lastdata=getdavglastdata()
-    if lastdata > 0 and davg > 0 and lastdata < davg*0.9:
+    if lastdata > 0 and davg > 0 and lastdata < davg*LOW:
         return True
     else:
         return False
 def overavg():
     davg, lastdata = getdavglastdata()
-    if lastdata > 0 and davg > 0 and lastdata > davg*1.1:
+    if lastdata > 0 and davg > 0 and lastdata > davg*HIGH:
         return True
     else:
         return False
