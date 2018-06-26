@@ -8,6 +8,8 @@ DBPASS='root'
 ACCKEY = "451ea17c-77ed704a-f3ferfref-af477"
 SECKEY = "6204fb72-bde5858c-57reffr0b-deba4"
 
+LEFTUSDT = 30
+
 #QTUM
 QTUMSYMBOL = 'QTUM/USDT'
 QTUMTABLE = 't_qtum_order'

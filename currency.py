@@ -28,7 +28,7 @@ def sellcurrency():
     sell(NEOSYMBOL, NEOPERCENT, NEOTABLE)
     sell(ETHSYMBOL, ETHPERCENT, ETHTABLE)
     sell(XRPSYMBOL, XRPPERCENT, XRPTABLE)
-
+    checkbalance()
     return ''
 
 
