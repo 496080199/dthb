@@ -7,6 +7,7 @@ from log import log
 def buy(symbol,amount,table):
     log.warn(getdatetime()+'=='+str(symbol)+'==开始执行买入任务...')
     try:
+        time.sleep(1)
         exchange = login()
         exchange.options['createMarketBuyOrderRequiresPrice'] = False
         orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
@@ -43,6 +44,7 @@ def buy(symbol,amount,table):
 def sell(symbol,percent,table):
     log.warn(getdatetime()+'=='+str(symbol)+'==开始执行卖出任务...')
     try:
+        time.sleep(1)
         exchange = login()
         sqldata = "SELECT id,amount,filled  from "+str(table)+" WHERE process='0' AND symbol='"+str(symbol)+"'"
         conn = opensqlconn()
