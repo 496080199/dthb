@@ -122,7 +122,7 @@ def sell(symbol,percent,table):
     return 'False'
 
 if __name__ == '__main__':
-    pass
+    buy('EOS/USDT',0.1,'t_eos_order')
 
 
 
