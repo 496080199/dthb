@@ -76,6 +76,11 @@ def sell(symbol,percent,table):
             profitprice = wantprofit / sumfilled
         log.warn('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit) + ',预期均价:' + str(profitprice))
         if profit > wantprofit:
+            try:
+                mail(str(symbol)+'已达到卖出条件','卖出通知')
+            except:
+                mail(str(symbol) + '已达到卖出条件', '卖出通知')
+                pass
             exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
             for oid in idlist:
                 sqldata = "UPDATE "+str(table)+" set process = '1' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
