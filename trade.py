@@ -30,7 +30,7 @@ def buy(symbol,amount,table):
         ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
         averageprice = Decimal((ask + bid) / 2)
         if averageprice < currentprice:
-            orderdata = exchange.create_market_buy_order(symbol=symbol, amount=str(amount))
+            orderdata = exchange.create_market_buy_order(symbol=symbol, amount=float(amount))
             time.sleep(5)
             if orderdata['info']['status'] != 'ok':
                 exchange.cancel_order(orderdata['id'])
@@ -102,7 +102,7 @@ def sell(symbol,percent,table):
             except:
                 mail(str(symbol) + '已达到卖出条件', '卖出通知')
                 pass
-            exchange.create_market_sell_order(symbol=symbol, amount=str(sumfilled))
+            exchange.create_market_sell_order(symbol=symbol, amount=float(sumfilled))
             for oid in idlist:
                 sqldata = "UPDATE "+str(table)+" set process = '1' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
                 c.execute(sqldata)
