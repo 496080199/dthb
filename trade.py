@@ -11,6 +11,10 @@ def buy(symbol,amount,table):
         time.sleep(1)
         exchange = login()
         exchange.options['createMarketBuyOrderRequiresPrice'] = False
+        orderbook = exchange.fetch_order_book(symbol=symbol)
+        bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
+        ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
+        averageprice = Decimal((ask + bid) / 2)
         sqldata = "SELECT id,amount,filled  from " + str(table) + " WHERE process='0' AND symbol='" + str(symbol) + "'"
         conn = opensqlconn()
         c = conn.cursor()
@@ -24,12 +28,12 @@ def buy(symbol,amount,table):
             sumfilled += row[2]
             sumamount += row[1]
             idlist.append(row[0])
-        currentprice = Decimal(sumamount/sumfilled)
-        orderbook = exchange.fetch_order_book(symbol=symbol)
-        bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
-        ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
-        averageprice = Decimal((ask + bid) / 2)
-        if averageprice < currentprice:
+        if sumfilled == Decimal(0.0):
+            currentprice=averageprice
+        else:
+            currentprice = Decimal(sumamount/sumfilled)
+
+        if averageprice <= currentprice:
             orderdata = exchange.create_market_buy_order(symbol=symbol, amount=float(amount))
             time.sleep(5)
             if orderdata['info']['status'] != 'ok':
