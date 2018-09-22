@@ -3,6 +3,7 @@
 
 from common import *
 from log import log
+import traceback
 
 def buy(symbol,amount,table):
     log.warn(getdatetime()+'=='+str(symbol)+'==开始执行买入任务...')
@@ -33,7 +34,7 @@ def buy(symbol,amount,table):
         log.warn(getdatetime() +'=='+str(symbol)+'==买入成功')
         return 'True'
     except Exception as e:
-        log.warn('买入异常退出:'+str(e))
+        log.warn('买入异常退出:'+str(traceback.format_exc()))
     try:
         del exchange
     except:
@@ -75,11 +76,7 @@ def sell(symbol,percent,table):
             profitprice = wantprofit / sumfilled
         log.warn('当前均价:' + str(averageprice) + ',卖出数量:' + str(sumfilled) + ',当前收益:' + str(profit) + ',预期收益:' + str(wantprofit) + ',预期均价:' + str(profitprice))
         if profit > wantprofit:
-            try:
-                exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
-            except:
-                log.warn('订单异常')
-                return 'False'
+            exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
             for oid in idlist:
                 sqldata = "UPDATE "+str(table)+" set process = '1' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
                 c.execute(sqldata)
@@ -91,7 +88,7 @@ def sell(symbol,percent,table):
         conn.close()
         log.warn(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
     except Exception as e:
-        log.warn('卖出异常退出:'+str(e))
+        log.warn('卖出异常退出:'+str(traceback.format_exc()))
     try:
         del exchange
     except:
@@ -99,7 +96,7 @@ def sell(symbol,percent,table):
     return 'False'
 
 if __name__ == '__main__':
-    sell(QTUMSYMBOL, QTUMPERCENT, QTUMTABLE)
+    pass
 
 
 
