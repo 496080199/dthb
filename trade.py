@@ -30,7 +30,7 @@ def buy(symbol,amount,table):
         ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
         averageprice = Decimal((ask + bid) / 2)
         if averageprice < currentprice:
-            orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
+            orderdata = exchange.create_market_buy_order(symbol=symbol, amount=str(amount))
             time.sleep(5)
             if orderdata['info']['status'] != 'ok':
                 exchange.cancel_order(orderdata['id'])
