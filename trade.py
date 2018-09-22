@@ -102,7 +102,7 @@ def sell(symbol,percent,table):
             except:
                 mail(str(symbol) + '已达到卖出条件', '卖出通知')
                 pass
-            exchange.create_market_sell_order(symbol=symbol, amount=sumfilled)
+            exchange.create_market_sell_order(symbol=symbol, amount=str(sumfilled))
             for oid in idlist:
                 sqldata = "UPDATE "+str(table)+" set process = '1' WHERE id='" + str(oid) + "' AND symbol='"+str(symbol)+"'"
                 c.execute(sqldata)
