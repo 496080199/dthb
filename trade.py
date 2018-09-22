@@ -11,28 +11,49 @@ def buy(symbol,amount,table):
         time.sleep(1)
         exchange = login()
         exchange.options['createMarketBuyOrderRequiresPrice'] = False
-        orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
-        time.sleep(5)
-        if orderdata['info']['status'] != 'ok':
-            exchange.cancel_order(orderdata['id'])
-            log.warn('订单取消')
-            return 'False'
-        orderinfo = exchange.fetch_order(symbol=symbol, id=orderdata['id'])
-        if orderinfo['status'] != 'closed':
-            exchange.cancel_order(orderdata['id'])
-            log.warn('订单取消')
-            return 'False'
-        filledamount = float(orderinfo['info']['field-amount']) - float(orderinfo['info']['field-fees'])
-        sqldata = "INSERT INTO "+str(table)+" (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
-            orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
-            orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','0')"
+        sqldata = "SELECT id,amount,filled  from " + str(table) + " WHERE process='0' AND symbol='" + str(symbol) + "'"
         conn = opensqlconn()
         c = conn.cursor()
         c.execute(sqldata)
+        sqlresult = c.fetchall()
         conn.commit()
-        conn.close()
-        log.warn(getdatetime() +'=='+str(symbol)+'==买入成功')
-        return 'True'
+        sumfilled = Decimal(0.0)
+        sumamount = Decimal(0.0)
+        idlist = []
+        for row in sqlresult:
+            sumfilled += row[2]
+            sumamount += row[1]
+            idlist.append(row[0])
+        currentprice = Decimal(sumamount/sumfilled)
+        orderbook = exchange.fetch_order_book(symbol=symbol)
+        bid = orderbook['bids'][0][0] if len(orderbook['bids']) > 0 else None
+        ask = orderbook['asks'][0][0] if len(orderbook['asks']) > 0 else None
+        averageprice = Decimal((ask + bid) / 2)
+        if averageprice < currentprice:
+            orderdata = exchange.create_market_buy_order(symbol=symbol, amount=amount)
+            time.sleep(5)
+            if orderdata['info']['status'] != 'ok':
+                exchange.cancel_order(orderdata['id'])
+                log.warn('订单取消')
+                return 'False'
+            orderinfo = exchange.fetch_order(symbol=symbol, id=orderdata['id'])
+            if orderinfo['status'] != 'closed':
+                exchange.cancel_order(orderdata['id'])
+                log.warn('订单取消')
+                return 'False'
+            filledamount = float(orderinfo['info']['field-amount']) - float(orderinfo['info']['field-fees'])
+            sqldata = "INSERT INTO "+str(table)+" (id,dt,symbol,side,amount,filled,process) VALUES ('" + str(
+                orderinfo['id']) + "','" + str(orderinfo['datetime']) + "','" + str(orderinfo['symbol']) + "','" + str(
+                orderinfo['side']) + "','" + str(orderinfo['amount']) + "','" + str(filledamount) + "','0')"
+            conn = opensqlconn()
+            c = conn.cursor()
+            c.execute(sqldata)
+            conn.commit()
+            conn.close()
+            log.warn(getdatetime() +'=='+str(symbol)+'==买入成功')
+            return 'True'
+        else:
+            log.warn('当前市价（'+str(averageprice)+'）不小于持有均价（'+str(currentprice)+'）')
     except Exception as e:
         log.warn('买入异常退出:'+str(traceback.format_exc()))
     try:
