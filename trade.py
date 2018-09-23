@@ -28,7 +28,7 @@ def buy(symbol,amount,table):
             sumfilled += row[2]
             sumamount += row[1]
             idlist.append(row[0])
-        if sumfilled == Decimal(0.0):
+        if sumfilled == Decimal(0.0) or sumamount == Decimal(0.0):
             currentprice=averageprice
         else:
             currentprice = Decimal(sumamount/sumfilled)
