@@ -53,7 +53,6 @@ def buy(symbol,amount,table):
             c = conn.cursor()
             c.execute(sqldata)
             conn.commit()
-            conn.close()
             log.warn(getdatetime() +'=='+str(symbol)+'==买入成功')
             return 'True'
         else:
@@ -114,10 +113,8 @@ def sell(symbol,percent,table):
                 c.execute(sqldata)
                 conn.commit()
                 log.warn('已更新订单' + str(oid) + '的状态')
-            conn.close()
             log.warn(getdatetime() +'=='+str(symbol)+ '==卖出成功')
             return 'True'
-        conn.close()
         log.warn(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
         gc.collect()
     except Exception as e:
