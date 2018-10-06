@@ -64,6 +64,8 @@ def buy(symbol,amount,table):
         del exchange
     except:
         pass
+    if conn:
+        conn.close()
     return 'False'
 
 
@@ -123,6 +125,8 @@ def sell(symbol,percent,table):
         del exchange
     except:
         pass
+    if conn:
+        conn.close()
     return 'False'
 
 if __name__ == '__main__':
