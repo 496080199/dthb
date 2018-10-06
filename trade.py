@@ -3,7 +3,7 @@
 
 from common import *
 from log import log
-import traceback
+import traceback,gc
 
 def buy(symbol,amount,table):
     log.warn(getdatetime()+'=='+str(symbol)+'==开始执行买入任务...')
@@ -119,6 +119,7 @@ def sell(symbol,percent,table):
             return 'True'
         conn.close()
         log.warn(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
+        gc.collect()
     except Exception as e:
         log.warn('卖出异常退出:'+str(traceback.format_exc()))
     try:
@@ -127,10 +128,11 @@ def sell(symbol,percent,table):
         pass
     if conn:
         conn.close()
+    
     return 'False'
 
 if __name__ == '__main__':
-    buy('EOS/USDT',0.1,'t_eos_order')
+    pass
 
 
 
