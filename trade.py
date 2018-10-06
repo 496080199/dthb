@@ -54,6 +54,7 @@ def buy(symbol,amount,table):
             c.execute(sqldata)
             conn.commit()
             log.warn(getdatetime() +'=='+str(symbol)+'==买入成功')
+            conn.close()
             return 'True'
         else:
             log.warn('当前市价（'+str(averageprice)+'）不小于持有均价（'+str(currentprice)+'）')
@@ -114,6 +115,7 @@ def sell(symbol,percent,table):
                 conn.commit()
                 log.warn('已更新订单' + str(oid) + '的状态')
             log.warn(getdatetime() +'=='+str(symbol)+ '==卖出成功')
+            conn.close()
             return 'True'
         log.warn(getdatetime() +'=='+str(symbol)+'==未达卖出条件')
         gc.collect()
