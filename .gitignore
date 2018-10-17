@@ -1,3 +1,6 @@
 *.db
 config.py
 *.log*
+__pycache__/*
+.idea/*
+*.sqlite

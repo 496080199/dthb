@@ -7,7 +7,7 @@ from fxhgbi import *
 def buycurrency():
     if belowavg():
         log.warn('低于300日均线买入')
-        buy(QTUMSYMBOL, QTUMAMOUNT * 2, QTUMTABLE)
+        #buy(QTUMSYMBOL, QTUMAMOUNT * 2, QTUMTABLE)
         buy(EOSSYMBOL, EOSAMOUNT * 2, EOSTABLE)
         buy(NEOSYMBOL, NEOAMOUNT * 2, NEOTABLE)
     elif overavg():
@@ -15,7 +15,7 @@ def buycurrency():
         pass
     else:
         log.warn('正常买入')
-        buy(QTUMSYMBOL, QTUMAMOUNT, QTUMTABLE)
+        #buy(QTUMSYMBOL, QTUMAMOUNT, QTUMTABLE)
         buy(EOSSYMBOL, EOSAMOUNT, EOSTABLE)
         buy(NEOSYMBOL, NEOAMOUNT, NEOTABLE)
 
@@ -24,7 +24,7 @@ def buycurrency():
 
 def sellcurrency():
     sell(QTUMSYMBOL, QTUMPERCENT, QTUMTABLE)
-    sell(EOSSYMBOL, EOSPERCENT, EOSTABLE)
+    #sell(EOSSYMBOL, EOSPERCENT, EOSTABLE)
     #sell(NEOSYMBOL, NEOPERCENT, NEOTABLE)
     sell(ETHSYMBOL, ETHPERCENT, ETHTABLE)
     #sell(XRPSYMBOL, XRPPERCENT, XRPTABLE)
