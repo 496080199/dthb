@@ -8,7 +8,7 @@ def buycurrency():
     if belowavg():
         log.warn('低于300日均线买入')
         #buy(QTUMSYMBOL, QTUMAMOUNT * 2, QTUMTABLE)
-        buy(EOSSYMBOL, EOSAMOUNT * 2, EOSTABLE)
+        #buy(EOSSYMBOL, EOSAMOUNT * 2, EOSTABLE)
         buy(NEOSYMBOL, NEOAMOUNT * 2, NEOTABLE)
     elif overavg():
         log.warn('超高于300日均线不买入')
@@ -16,7 +16,7 @@ def buycurrency():
     else:
         log.warn('正常买入')
         #buy(QTUMSYMBOL, QTUMAMOUNT, QTUMTABLE)
-        buy(EOSSYMBOL, EOSAMOUNT, EOSTABLE)
+        #buy(EOSSYMBOL, EOSAMOUNT, EOSTABLE)
         buy(NEOSYMBOL, NEOAMOUNT, NEOTABLE)
 
     return ''
